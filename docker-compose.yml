@@ -11,3 +11,4 @@ services:
     command: app.py
     volumes:
       - $FIREFOX_PROFILE:/app/profile
+      - ./config.ini:/app/config.ini
