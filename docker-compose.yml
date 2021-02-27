@@ -10,4 +10,4 @@ services:
     entrypoint: python3
     command: app.py
     volumes:
-      - $FIREFOX_PROFILE:/app/
+      - $FIREFOX_PROFILE:/app/profile
