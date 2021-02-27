@@ -1,6 +1,10 @@
 # zoho-auto-attendence
 zoho-auto-attendence
 
+# Create firefox profile
+
+https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles
+
 # Automatic your attendence and show notification
 using selnium and python
 
