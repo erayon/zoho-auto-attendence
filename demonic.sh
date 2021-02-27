@@ -18,7 +18,7 @@ echo "Register a service:  flask for flask_notification as a services in /etc/sy
 
 mv flask_notification.service /home/$USER/.config/systemd/user/flask_notification.service
 
-loginctl enable-linger username
+loginctl enable-linger $USER
 
 systemctl --user daemon-reload
 
