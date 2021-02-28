@@ -13,7 +13,7 @@ echo "Register a service:  flask for flask_notification as a services in /etc/sy
   echo "RestartSec=3"
   echo " ";
   echo "[Install]";
-  echo "WantedBy=getty.target";
+  echo "WantedBy=default.target";
 } | tee $PWD/flask_notification.service > /dev/null
 
 mv flask_notification.service /home/$USER/.config/systemd/user/flask_notification.service
