@@ -61,6 +61,32 @@ class AutoZohoAttendence(Base):
         val = g.latlng
         lat, lng = val[0], val[1]
         return lat, lng
+    
+    def test(self):
+        try:
+            res = False
+            self.web_driver_load()
+            self.driver.get(AutoZohoAttendence.__URL__)
+            web_obj = self.driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/div/button[3]/div/div[3]')
+            val = web_obj.text
+            _, _ = val.split("\n")
+            self.notification("normal",\
+                              "Hi!! Automated attendance testing done..........",
+                              "Looks like all good to go! yuppp")
+            res = True
+        except NoSuchElementException:
+            self.notification("critical",\
+                              "Zoho Attendence Login Failed!",
+                              "Session has Expired Need to Login in Zoho Attendence page in you firefox Profile!")
+            res = False
+        except Exception as e:
+            self.notification("critical", \
+                              "Attendence Failed", \
+                              "This profile was last used with a newer version of this application. Please create a new Firefox profile")
+            res = False
+        finally:
+            self.web_driver_quit()
+            return res
 
     def open_zoho__attendence_page(self,entry_type):
         try:
@@ -127,21 +153,22 @@ def job(entry_type):
         az.attendence(entry_type)
 
 def warm_up(start_time,end_time):
-    machine_on_time = datetime.datetime.now().strftime('%H:%M')
-    checkin_time    = datetime.strptime(start_time, '%H:%M').time()
-    checkout_time   = datetime.strptime(end_time, '%H:%M').time()
-    if ( machine_on_time < checkin_time ) and ( machine_on_time < checkout_time ):
-        pass
-    if ( machine_on_time > checkin_time ) and ( machine_on_time < checkout_time ):
-        az.notification(urgency='critical', \
-                        title='Late Check-in', \
-                        message='Hey there!!....another late entry!!...dont worry let me mark your entry if you have not done yet')
-        az.attendence(entry_type='Check-in')
-    if ( machine_on_time > checkout_time ):
-        az.notification(urgency='critical', \
-                        title='Late Check-out', \
-                        message='Hey there!!....another late entry!!...dont worry let me mark your entry if you have not done yet')
-        az.attendence(entry_type='Check-out')
+    if datetime.datetime.today().strftime('%A') not in exclude_day:
+        machine_on_time = datetime.datetime.now().strftime('%H:%M')
+        checkin_time    = datetime.datetime.strptime(start_time, '%H:%M').time()
+        checkout_time   = datetime.datetime.strptime(end_time, '%H:%M').time()
+        if ( machine_on_time < checkin_time ) and ( machine_on_time < checkout_time ):
+            pass
+        if ( machine_on_time > checkin_time ) and ( machine_on_time < checkout_time ):
+            az.notification(urgency='critical', \
+                            title='Late Check-in', \
+                            message='Hey there!!....another late entry!!...dont worry let me mark your entry if you have not done yet')
+            az.attendence(entry_type='Check-in')
+        if ( machine_on_time > checkout_time ):
+            az.notification(urgency='critical', \
+                            title='Late Check-out', \
+                            message='Hey there!!....another late entry!!...dont worry let me mark your entry if you have not done yet')
+            az.attendence(entry_type='Check-out')
 
 
 exclude_day = ['Saturday','Sunday']
@@ -149,12 +176,17 @@ start_time  = "10:00"
 end_time    = "18:00"
 
 if __name__ == "__main__":
-    az.notification(urgency='normal', \
-                    title='Automated attendance started! => {}'.format(str(datetime.datetime.now())), \
-                    message="Hey there!! daemon automated attendance start! your Check-in and Check-out time is monitoring and mark accordingly!")
-    warm_up(start_time,end_time)
-    schedule.every().day.at(start_time).do(job,'Check-in')
-    schedule.every().day.at(end_time).do(job,'Check-out')
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    if az.test():
+        az.notification(urgency='normal', \
+                        title='Automated attendance started! => {}'.format(str(datetime.datetime.now())), \
+                        message="Hey there!! daemon automated attendance start! your Check-in and Check-out time is monitoring and mark accordingly!")
+        warm_up(start_time,end_time)
+        schedule.every().day.at(start_time).do(job,'Check-in')
+        schedule.every().day.at(end_time).do(job,'Check-out')
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+    else:
+        az.notification(urgency='critical', \
+                        title='Automated attendance Failed to start for today! => {}'.format(str(datetime.datetime.now())), \
+                        message="Sorry! looks like some internal issue! Do your attendence manualy! try for next few days! if continue persists please contact with the creator!!")
