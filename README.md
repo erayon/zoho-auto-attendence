@@ -1,6 +1,8 @@
 # zoho-auto-attendence
 zoho-auto-attendence
 
+![Alt text](attendence.png?raw=true "architecture") 
+
 # Create firefox profile
 
 https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles
