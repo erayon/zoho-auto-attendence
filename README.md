@@ -12,6 +12,7 @@ using selnium and python
 
 
 sudo apt-get install firefox-geckodriver
+mkdir mydata
 
 # Linux
 loginctl enable-linger username

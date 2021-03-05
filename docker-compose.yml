@@ -12,3 +12,4 @@ services:
     volumes:
       - $FIREFOX_PROFILE:/app/profile
       - ./config.ini:/app/config.ini
+      - ./mydata:/app/mydata
